@@ -1,7 +1,7 @@
 [DEFAULT]
 sqlalchemy_url = ${config:sqlalchemy_url}
 
-[app:baobab]
+[app:kotti]
 use = egg:kotti
 session.type = file
 session.data_dir = /var/kunden/tmp/${config:username}/sessions/data
@@ -27,8 +27,8 @@ mail.port = 25
 mail.username = ${config:mail_username}
 mail.password = ${config:mail_password}
 
-kotti.site_title = ${config:site_title}
-kotti.secret = ${config:admin_password}
+kotti.site_title = ${config:kotti_site_title}
+kotti.secret = ${config:kotti_secret}
 
 kotti.configurators =
     kotti_tinymce.kotti_configure
@@ -39,6 +39,7 @@ use = egg:fanstatic#fanstatic
 [pipeline:main]
 pipeline =
     fanstatic
+    kotti
 
 [server:main]
 use = egg:Paste#http
@@ -97,7 +98,7 @@ formatter = generic
 
 [handler_file]
 class = FileHandler
-args = ('/var/kunden/webs/jk404/buildout.live/kotti.log', 'a')
+args = ('${buildout:directory}/kotti.log', 'a')
 level = DEBUG
 formatter = generic
 
