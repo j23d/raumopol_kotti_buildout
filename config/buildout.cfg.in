@@ -1,0 +1,59 @@
+[buildout]
+parts =
+    kotti
+    create-ini
+    create-fcgi
+    chmod-fcgi
+    create-htaccess
+
+
+# here is an example if you want to change your database to production environment
+#sqlalchemy_url = postgresql://db_username:db_password@db_server:port/db_name
+
+[config]
+sqlalchemy_url = %databasestring%
+username = %username%
+session_key = %session_key%
+session_secret = %session_secret%
+mail_default_sender = %mail_default_sender%
+mail_username = %mail_username%
+mail_password = %mail_password%
+kotti_site_title = %kotti_site_title%
+kotti_secret = %kotti_secret%
+
+[kotti]
+recipe = zc.recipe.egg
+eggs =
+    Kotti
+    ordereddict
+    pyinotify
+    psycopg2
+    Paste
+    PasteDeploy
+    PasteScript
+dependent-scripts = true
+interpreter = py
+
+[create-ini]
+recipe = collective.recipe.template
+input = ${buildout:directory}/config/kotti.ini.in
+output = ${buildout:directory}/kotti.ini
+
+
+[create-fcgi]
+recipe = collective.recipe.template
+input = ${buildout:directory}/config/kotti.fcgi.in
+output = ${buildout:directory}/kotti.fcgi
+
+[chmod-fcgi]
+recipe = collective.recipe.cmd
+on_install = true
+on_update = true
+cmds =
+    chmod a+x ${buildout:directory}/kotti.fcgi
+
+
+[create-htaccess]
+recipe = collective.recipe.template
+input = ${buildout:directory}/config/.htaccess.in
+output = ${buildout:directory}/.htaccess
