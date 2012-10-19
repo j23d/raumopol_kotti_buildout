@@ -1,5 +1,4 @@
 .installed.cfg
-.mr.developer.cfg
 Kotti.db*
 bin/
 build/
@@ -10,14 +9,12 @@ parts/
 src/
 downloads/
 eggs/
-pyramid.log
-pyramid.pid
-.codeintel/
 local
-omelette
-tnc.sublime-project
-tnc.sublime-workspace
 paster.log
 paster.pid
 kotti.log
 fcgi.log
+.htaccess
+kotti.fcgi
+kotti.ini
+
