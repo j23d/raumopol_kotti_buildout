@@ -1,0 +1,64 @@
+#!${buildout:directory}/bin/python
+# -*- coding: utf-8 -*-
+import sys
+import os
+
+# Redirect stdout and stderr
+sys.stdout = file('fcgi.log', 'a')
+sys.stderr = sys.stdout
+
+INI = 'kotti.ini'
+
+#sys.path.append('${buildout:directory}/bin')
+from .bin.paster import sys as bin_paster_sys
+
+sys.path[0:0] = bin_paster_sys.path
+
+import pyinotify
+from flup.server.fcgi import WSGIServer
+from pyramid import paster
+
+filename = os.path.join(os.getcwd(), __file__) \
+              if not os.path.isabs(__file__) \
+              else __file__
+path = os.path.join(os.getcwd(), os.path.split(__file__)[0])
+
+# enable logging
+paster.setup_logging(os.path.join(path, INI))
+
+# Switch to the directory of your project. (Optional.)
+os.chdir(path)
+
+# Redirect stdout and stderr
+sys.stdout = file('fcgi.log', 'a')
+sys.stderr = sys.stdout
+
+# Watch for changes to this file and kill the server
+# so that the next request will start it a new
+wm = pyinotify.WatchManager()
+mask = pyinotify.IN_MODIFY
+
+
+class Handler(pyinotify.ProcessEvent):
+    def process_IN_MODIFY(self, event):
+        os.chdir(path)
+        sys.stdout = file('fcgi.log', 'a')
+        print "killing process: %s" % os.getpid()
+        sys.stdout.flush()
+        import signal
+        os.kill(os.getpid(), signal.SIGKILL)
+
+notifier = pyinotify.ThreadedNotifier(wm, Handler())
+notifier.start()
+wdd = wm.add_watch(filename, mask)
+
+# load the app and start the server
+from paste.deploy import loadapp
+try:
+    wsgi_app = loadapp('config:%s' % (os.path.join(path, INI)))
+except:
+    import traceback
+    traceback.print_exc(file=sys.stdout)
+    sys.stdout.flush()
+
+WSGIServer(wsgi_app, environ={'SCRIPT_NAME': '', }, debug=False).run()

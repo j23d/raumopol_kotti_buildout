@@ -1,0 +1,107 @@
+[DEFAULT]
+sqlalchemy_url = ${config:sqlalchemy_url}
+
+[app:baobab]
+use = egg:kotti
+session.type = file
+session.data_dir = /var/kunden/tmp/${config:username}/sessions/data
+session.lock_dir = /var/kunden/tmp/${config:username}/data/sessions/lock
+session.key = ${config:session_key}
+session.secret = ${config:session_secret}
+session.cookie_on_exception = true
+
+pyramid.reload_templates = true
+pyramid.debug_templates = true
+pyramid.debug_authorization = false
+pyramid.debug_notfound = false
+pyramid.debug_routematch = false
+pyramid.default_locale_name = de
+pyramid.includes =
+    pyramid_tm
+    pyramid_beaker
+
+sqlalchemy.url = %(sqlalchemy_url)s
+mail.default_sender = ${config:mail_default_sender}
+mail.host = smtp.raumopol.de
+mail.port = 25
+mail.username = ${config:mail_username}
+mail.password = ${config:mail_password}
+
+kotti.site_title = ${config:site_title}
+kotti.secret = ${config:admin_password}
+
+kotti.configurators =
+    kotti_tinymce.kotti_configure
+
+[filter:fanstatic]
+use = egg:fanstatic#fanstatic
+
+[pipeline:main]
+pipeline =
+    fanstatic
+
+[server:main]
+use = egg:Paste#http
+host = 0.0.0.0
+port = 15081
+use_threadpool = True
+threadpool_workers = 10
+
+
+[alembic]
+# path to migration scripts
+script_location = alembic/alembic
+
+# template used to generate migration files
+# file_template = %%(rev)s_%%(slug)s
+
+# set to 'true' to run the environment during
+# the 'revision' command, regardless of autogenerate
+# revision_environment = false
+
+sqlalchemy.url = %(sqlalchemy_url)s
+
+# Begin logging configuration
+
+[loggers]
+keys = root, kotti, sqlalchemy
+
+[handlers]
+keys = console, file
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = DEBUG
+handlers = file
+
+[logger_kotti]
+level = DEBUG
+handlers = file
+qualname = kotti
+
+[logger_sqlalchemy]
+level = WARN
+handlers = file
+qualname = sqlalchemy.engine
+# "level = INFO" logs SQL queries.
+# "level = DEBUG" logs SQL queries and results.
+# "level = WARN" logs neither.  (Recommended for production systems.)
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = DEBUG
+formatter = generic
+
+[handler_file]
+class = FileHandler
+args = ('/var/kunden/webs/jk404/buildout.live/kotti.log', 'a')
+level = DEBUG
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s [%(name)s][%(threadName)s] %(message)s
+
+# End logging configuration
