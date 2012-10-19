@@ -9,10 +9,13 @@ sys.stderr = sys.stdout
 
 INI = 'kotti.ini'
 
-#sys.path.append('${buildout:directory}/bin')
-from .bin.paster import sys as bin_paster_sys
 
-sys.path[0:0] = bin_paster_sys.path
+# add the eggs to the sys path
+dir = os.getcwd() + '/'
+eggs_dir = dir + 'eggs/'
+eggs_paths = [eggs_dir + egg for egg in os.listdir(eggs_dir)]
+
+sys.path[0:0] = eggs_paths
 
 import pyinotify
 from flup.server.fcgi import WSGIServer
