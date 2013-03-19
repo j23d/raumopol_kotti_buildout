@@ -14,6 +14,7 @@ INI = 'kotti.ini'
 dir = os.getcwd() + '/'
 eggs_dir = dir + 'eggs/'
 eggs_paths = [eggs_dir + egg for egg in os.listdir(eggs_dir)]
+eggs_paths.reverse()
 
 sys.path[0:0] = eggs_paths
 
