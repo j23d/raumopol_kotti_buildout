@@ -9,7 +9,7 @@ function error {
 while [ $# -gt 0 ]; do
     case "$1" in
         -mds|--MAILDEFAULTSENDER)
-            -MAILDEFAULTSENDER="$2"
+            MAILDEFAULTSENDER="$2"
             shift
             ;;
         -mu|--MAILUSERNAME)
@@ -47,9 +47,8 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-
 # check the needed the variables
-if [[ -z $iMAILDEFAULTSENDER && -z $MAILUSERNAME && -z MAILPASSWORD ]]; then
+if [[ -z $MAILDEFAULTSENDER || -z $MAILUSERNAME || -z MAILPASSWORD ]]; then
     error
 fi
 
