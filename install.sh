@@ -1,19 +1,39 @@
 #!/bin/bash
 
 function error {
-    echo "usage: $0 {-d database_string | -u username"}
+    echo "usage: $0 [-mds mail default sender, -mu mail username, -mp mailpassword -d database_string -u username -st kotti site title -s kotti secret -sk kotti session key]"
     exit 0
 }
 
 # get some input vars
 while [ $# -gt 0 ]; do
     case "$1" in
+        -mds|--MAILDEFAULTSENDER)
+            -MAILDEFAULTSENDER="$2"
+            shift
+            ;;
+        -mu|--MAILUSERNAME)
+            MAILUSERNAME="$2"
+            shift
+            ;;
+        -mp|--MAILPASSWORD)
+            MAILPASSWORD="$2"
+            shift
+            ;;
         -d|--DATABASE)
             DATABASE="$2"
             shift
             ;;
         -u|--USERNAME)
             USERNAME="$2"
+            shift
+            ;;
+        -st|--KOTTISITETITLE)
+            KOTTISITETITLE="$2"
+            shift
+            ;;
+        -s|--KOTTISECRET)
+            KOTTISECRET="$2"
             shift
             ;;
         -sk|--SESSIONKEY)
@@ -25,10 +45,10 @@ while [ $# -gt 0 ]; do
 done
 
 
-# catch the variables
-# if [[ -z $DATABASE && -z $USERNAME ]]; then
-#     error
-# fi
+# check the needed the variables
+if [[ -z $iMAILDEFAULTSENDER && -z $MAILUSERNAME && -z MAILPASSWORD ]]; then
+    error
+fi
 
 if [ -z $DATABASE ]; then
     DATABASE='sqlite:\/\/\/%(here)s\/Kotti.db'
@@ -63,7 +83,7 @@ sed -i "s/%mail_username%/$MAILUSERNAME/g" ./buildout.cfg
 sed -i "s/%mail_password%/$MAILPASSWORD/g" ./buildout.cfg
 sed -i "s/%kotti_site_title%/$KOTTISITETITLE/g" ./buildout.cfg
 sed -i "s/%kotti_secret%/$KOTTISECRET/g" ./buildout.cfg
-
+cp ./config/versions.cfg.in ./versions.cfg
 
 # create virtualenv, activate it and run buildout
 if [ ! -f ./bin/python2.7 ]; then

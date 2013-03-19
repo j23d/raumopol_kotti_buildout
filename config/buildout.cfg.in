@@ -1,4 +1,6 @@
 [buildout]
+extends = versions.cfg
+
 parts =
     kotti
     create-ini
@@ -6,6 +8,7 @@ parts =
     chmod-fcgi
     create-htaccess
 
+versions = versions
 
 # here is an example if you want to change your database to production environment
 #sqlalchemy_url = postgresql://db_username:db_password@db_server:port/db_name
