@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function error {
-    echo "usage: $0 [-mds mail default sender, -mu mail username, -mp mailpassword -d database_string -u username -st kotti site title -s kotti secret -sk kotti session key]"
+    echo "usage: $0 -mds mail default sender, -mu mail username, -mp mailpassword [-d database_string -u username -st kotti site title -s kotti secret -sk kotti session key]"
     exit 0
 }
 
