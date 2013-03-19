@@ -40,6 +40,9 @@ while [ $# -gt 0 ]; do
             SESSIONKEY="$2"
             shift
             ;;
+        -h|--help)
+            error
+            ;;
     esac
     shift
 done
